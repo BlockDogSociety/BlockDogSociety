@@ -13,6 +13,8 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const isAdmin = user.email?.toLowerCase() === process.env.ADMIN_EMAIL?.toLowerCase();
+
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 px-4">
       <h1 className="text-2xl font-semibold">Welcome, {user.email}</h1>
@@ -22,6 +24,14 @@ export default async function DashboardPage() {
       <Link href="/vote" className="rounded-md border px-4 py-2 text-center">
         Vote on dogs
       </Link>
+      <Link href="/calendar" className="rounded-md border px-4 py-2 text-center">
+        View calendar
+      </Link>
+      {isAdmin && (
+        <Link href="/admin" className="rounded-md border px-4 py-2 text-center">
+          Admin
+        </Link>
+      )}
       <form action={signOut}>
         <button type="submit" className="w-full rounded-md border px-4 py-2">
           Sign out
