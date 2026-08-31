@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { createDog, type CreateDogState } from "@/features/dogs/actions";
 
@@ -48,7 +48,9 @@ export function UploadForm() {
     const dogFormData = new FormData();
     dogFormData.set("name", name);
     dogFormData.set("photoPath", path);
-    formAction(dogFormData);
+    startTransition(() => {
+      formAction(dogFormData);
+    });
   }
 
   const busy = uploading || pending;

@@ -26,7 +26,7 @@ export default async function VotePage() {
                   src={dog.photoUrl}
                   alt={dog.name}
                   fill
-                  sizes="(max-width: 640px) 50vw, 25vw"
+                  unoptimized
                   className="object-cover"
                 />
               </div>
