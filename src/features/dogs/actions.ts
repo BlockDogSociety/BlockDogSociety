@@ -4,14 +4,17 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
-export type UploadDogState = { error: string | null };
+export type CreateDogState = { error: string | null };
 
-export async function uploadDog(
-  _prevState: UploadDogState,
+// The photo itself is uploaded client-side straight to Supabase Storage
+// (see UploadForm) — Server Actions cap request bodies at 1MB by default,
+// far below a typical phone photo, so only the resulting path comes through.
+export async function createDog(
+  _prevState: CreateDogState,
   formData: FormData,
-): Promise<UploadDogState> {
+): Promise<CreateDogState> {
   const name = formData.get("name") as string;
-  const photo = formData.get("photo") as File;
+  const photoPath = formData.get("photoPath") as string;
 
   const supabase = await createClient();
   const {
@@ -22,29 +25,18 @@ export async function uploadDog(
     redirect("/login");
   }
 
-  if (!photo || photo.size === 0) {
+  if (!photoPath) {
     return { error: "Please choose a photo." };
   }
 
-  const extension = photo.name.split(".").pop() ?? "jpg";
-  const path = `${user.id}/${crypto.randomUUID()}.${extension}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from("dog-photos")
-    .upload(path, photo);
-
-  if (uploadError) {
-    return { error: uploadError.message };
-  }
-
-  const { error: insertError } = await supabase.from("dogs").insert({
+  const { error } = await supabase.from("dogs").insert({
     owner_id: user.id,
     name,
-    photo_path: path,
+    photo_path: photoPath,
   });
 
-  if (insertError) {
-    return { error: insertError.message };
+  if (error) {
+    return { error: error.message };
   }
 
   revalidatePath("/vote");
