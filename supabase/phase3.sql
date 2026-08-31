@@ -47,3 +47,8 @@ select
 from public.dogs d
 left join public.votes v on v.dog_id = d.id
 group by d.id;
+
+-- Views don't automatically inherit the grants their base tables have, even
+-- though the underlying dogs/votes RLS policies are already public-read —
+-- grant explicitly so anon/authenticated can actually select from it.
+grant select on public.dog_standings to anon, authenticated;
