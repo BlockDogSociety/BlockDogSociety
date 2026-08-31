@@ -30,20 +30,32 @@ function toStanding(
   };
 }
 
+// Queries the dogs table directly (not the dog_standings view below) so this
+// keeps working on the schema from schema.sql alone — it doesn't need the
+// Phase 3 migration (phase3.sql) to have been run yet.
 export async function getDogs(): Promise<DogStanding[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("dog_standings")
-    .select("id, name, photo_path, vote_count, selected_for_calendar")
+    .from("dogs")
+    .select("id, name, photo_path, votes(count)")
     .order("created_at", { ascending: false });
 
   if (error || !data) {
     return [];
   }
 
-  return data.map((row) => toStanding(supabase, row));
+  return data.map((dog) => ({
+    id: dog.id,
+    name: dog.name,
+    photoUrl: supabase.storage.from("dog-photos").getPublicUrl(dog.photo_path)
+      .data.publicUrl,
+    voteCount: dog.votes?.[0]?.count ?? 0,
+    selectedForCalendar: false,
+  }));
 }
 
+// The functions below require phase3.sql (the dog_standings view) to have
+// been run — they're only used by the new /admin and /calendar pages.
 export async function getTopDogs(limit: number): Promise<DogStanding[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
