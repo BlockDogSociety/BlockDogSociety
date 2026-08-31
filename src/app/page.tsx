@@ -14,23 +14,28 @@ export default async function Home() {
         Upload your dog. Vote for the cutest. Top 12 make the calendar.
       </p>
 
-      {user ? (
-        <Link
-          href="/dashboard"
-          className="rounded-md bg-black px-5 py-2.5 text-white"
-        >
-          Go to dashboard
+      <div className="flex gap-3">
+        <Link href="/vote" className="rounded-md border px-5 py-2.5">
+          View dogs &amp; vote
         </Link>
-      ) : (
-        <div className="flex gap-3">
-          <Link href="/signup" className="rounded-md bg-black px-5 py-2.5 text-white">
-            Sign up
+        {user ? (
+          <Link
+            href="/dashboard"
+            className="rounded-md bg-black px-5 py-2.5 text-white"
+          >
+            Go to dashboard
           </Link>
-          <Link href="/login" className="rounded-md border px-5 py-2.5">
-            Log in
-          </Link>
-        </div>
-      )}
+        ) : (
+          <>
+            <Link href="/signup" className="rounded-md bg-black px-5 py-2.5 text-white">
+              Sign up
+            </Link>
+            <Link href="/login" className="rounded-md border px-5 py-2.5">
+              Log in
+            </Link>
+          </>
+        )}
+      </div>
     </main>
   );
 }
