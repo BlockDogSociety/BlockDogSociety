@@ -14,7 +14,7 @@ export async function signUp(
   const password = formData.get("password") as string;
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -24,6 +24,13 @@ export async function signUp(
 
   if (error) {
     return { error: error.message };
+  }
+
+  // If email confirmation is disabled, signUp returns an active session
+  // immediately instead of requiring a click-through link.
+  if (data.session) {
+    revalidatePath("/", "layout");
+    redirect("/dashboard");
   }
 
   redirect("/signup/check-email");
