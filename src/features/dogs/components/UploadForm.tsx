@@ -6,6 +6,9 @@ import { createDog, type CreateDogState } from "@/features/dogs/actions";
 
 const initialState: CreateDogState = { error: null };
 
+const ALLOWED_TYPES = ["image/jpeg", "image/png"];
+const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
+
 export function UploadForm() {
   const [state, formAction, pending] = useActionState(createDog, initialState);
   const [uploading, setUploading] = useState(false);
@@ -19,6 +22,16 @@ export function UploadForm() {
 
     if (!photo || photo.size === 0) {
       setUploadError("Please choose a photo.");
+      return;
+    }
+
+    if (!ALLOWED_TYPES.includes(photo.type)) {
+      setUploadError("Photos must be a JPEG or PNG file.");
+      return;
+    }
+
+    if (photo.size > MAX_FILE_BYTES) {
+      setUploadError("Photos must be 10MB or smaller.");
       return;
     }
 
@@ -78,10 +91,14 @@ export function UploadForm() {
           id="photo"
           name="photo"
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png"
           required
           className="rounded-md border px-3 py-2"
         />
+        <p className="text-xs text-gray-500">
+          JPEG or PNG, up to 10MB. Make sure your photo is clear (300 DPI or
+          higher) so we can see your cute dog!
+        </p>
       </div>
 
       {(uploadError || state.error) && (
