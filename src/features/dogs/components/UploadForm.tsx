@@ -18,6 +18,7 @@ export function UploadForm() {
     setUploadError(null);
 
     const name = formData.get("name") as string;
+    const story = formData.get("story") as string;
     const photo = formData.get("photo") as File;
 
     if (!photo || photo.size === 0) {
@@ -60,6 +61,7 @@ export function UploadForm() {
 
     const dogFormData = new FormData();
     dogFormData.set("name", name);
+    dogFormData.set("story", story);
     dogFormData.set("photoPath", path);
     startTransition(() => {
       formAction(dogFormData);
@@ -84,6 +86,21 @@ export function UploadForm() {
       </div>
 
       <div className="flex flex-col gap-1">
+        <label htmlFor="story" className="text-sm font-medium">
+          Tell us about your dog
+        </label>
+        <textarea
+          id="story"
+          name="story"
+          required
+          rows={4}
+          maxLength={500}
+          placeholder="A brief description of your dog, plus the craziest short story about your dog on the block."
+          className="rounded-md border px-3 py-2"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
         <label htmlFor="photo" className="text-sm font-medium">
           Photo
         </label>
@@ -97,7 +114,7 @@ export function UploadForm() {
         />
         <p className="text-xs text-gray-500">
           JPEG or PNG, up to 10MB. Make sure your photo is clear (300 DPI or
-          higher) so we can see your cute dog!
+          higher).
         </p>
       </div>
 

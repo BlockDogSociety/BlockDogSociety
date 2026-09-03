@@ -36,6 +36,10 @@ export default async function Home() {
           </>
         )}
       </div>
+
+      <Link href="/contact" className="text-sm text-gray-500 underline">
+        Recommend a rescue, or ask us something
+      </Link>
     </main>
   );
 }

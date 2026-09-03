@@ -22,17 +22,17 @@ export default async function CalendarPage() {
           </p>
           <div className="mb-8 grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
             {dogs.map((dog) => (
-              <div
-                key={dog.id}
-                className="relative aspect-square overflow-hidden rounded-lg bg-gray-100"
-              >
-                <Image
-                  src={dog.photoUrl}
-                  alt={dog.name}
-                  fill
-                  unoptimized
-                  className="object-cover"
-                />
+              <div key={dog.id} className="flex flex-col gap-1">
+                <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+                  <Image
+                    src={dog.photoUrl}
+                    alt={dog.name}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                </div>
+                <p className="text-sm font-medium">{dog.name}</p>
               </div>
             ))}
           </div>

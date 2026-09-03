@@ -36,6 +36,9 @@ export default async function VotePage() {
                 />
               </div>
               <p className="font-medium">{dog.name}</p>
+              {dog.story && (
+                <p className="line-clamp-3 text-sm text-gray-500">{dog.story}</p>
+              )}
               <VoteButton dogId={dog.id} voteCount={dog.voteCount} />
             </div>
           ))}

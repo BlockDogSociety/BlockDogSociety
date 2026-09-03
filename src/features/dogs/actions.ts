@@ -14,6 +14,7 @@ export async function createDog(
   formData: FormData,
 ): Promise<CreateDogState> {
   const name = formData.get("name") as string;
+  const story = formData.get("story") as string;
   const photoPath = formData.get("photoPath") as string;
 
   const supabase = await createClient();
@@ -32,6 +33,7 @@ export async function createDog(
   const { error } = await supabase.from("dogs").insert({
     owner_id: user.id,
     name,
+    story,
     photo_path: photoPath,
   });
 

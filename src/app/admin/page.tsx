@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import { getTopDogs } from "@/features/dogs/queries";
 import { getPaidOrders } from "@/features/payments/queries";
@@ -11,7 +12,12 @@ export default async function AdminPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
-      <h1 className="mb-6 text-2xl font-semibold">Admin</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Admin</h1>
+        <Link href="/admin/submissions" className="text-sm underline">
+          Submissions
+        </Link>
+      </div>
 
       <div className="mb-8 flex flex-col gap-4 rounded-lg border p-4">
         <div>
@@ -47,7 +53,12 @@ export default async function AdminPage() {
               {i + 1}. {dog.name}
               {dog.selectedForCalendar ? " ⭐" : ""}
             </span>
-            <span className="text-gray-500">{dog.voteCount} votes</span>
+            <span className="flex items-center gap-3">
+              <span className="text-gray-500">{dog.voteCount} votes</span>
+              <Link href={`/admin/crop/${dog.id}`} className="text-sm underline">
+                Crop
+              </Link>
+            </span>
           </li>
         ))}
       </ol>

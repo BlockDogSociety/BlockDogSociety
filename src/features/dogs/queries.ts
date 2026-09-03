@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 export type DogStanding = {
   id: string;
   name: string;
+  story: string | null;
   photoUrl: string;
   voteCount: number;
   selectedForCalendar: boolean;
@@ -11,6 +12,7 @@ export type DogStanding = {
 type StandingRow = {
   id: string;
   name: string;
+  story: string | null;
   photo_path: string;
   vote_count: number;
   selected_for_calendar: boolean;
@@ -23,6 +25,7 @@ function toStanding(
   return {
     id: row.id,
     name: row.name,
+    story: row.story,
     photoUrl: supabase.storage.from("dog-photos").getPublicUrl(row.photo_path)
       .data.publicUrl,
     voteCount: row.vote_count,
@@ -37,7 +40,7 @@ export async function getDogs(): Promise<DogStanding[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("dogs")
-    .select("id, name, photo_path, votes(count)")
+    .select("id, name, story, photo_path, votes(count)")
     .order("created_at", { ascending: false });
 
   if (error || !data) {
@@ -47,6 +50,7 @@ export async function getDogs(): Promise<DogStanding[]> {
   return data.map((dog) => ({
     id: dog.id,
     name: dog.name,
+    story: dog.story,
     photoUrl: supabase.storage.from("dog-photos").getPublicUrl(dog.photo_path)
       .data.publicUrl,
     voteCount: dog.votes?.[0]?.count ?? 0,
@@ -60,7 +64,7 @@ export async function getTopDogs(limit: number): Promise<DogStanding[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("dog_standings")
-    .select("id, name, photo_path, vote_count, selected_for_calendar")
+    .select("id, name, story, photo_path, vote_count, selected_for_calendar")
     .order("vote_count", { ascending: false })
     .limit(limit);
 
@@ -75,7 +79,7 @@ export async function getSelectedDogs(): Promise<DogStanding[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("dog_standings")
-    .select("id, name, photo_path, vote_count, selected_for_calendar")
+    .select("id, name, story, photo_path, vote_count, selected_for_calendar")
     .eq("selected_for_calendar", true)
     .order("vote_count", { ascending: false });
 
@@ -84,4 +88,27 @@ export async function getSelectedDogs(): Promise<DogStanding[]> {
   }
 
   return data.map((row) => toStanding(supabase, row));
+}
+
+export async function getDogById(id: string): Promise<DogStanding | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("dogs")
+    .select("id, name, story, photo_path")
+    .eq("id", id)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return {
+    id: data.id,
+    name: data.name,
+    story: data.story,
+    photoUrl: supabase.storage.from("dog-photos").getPublicUrl(data.photo_path)
+      .data.publicUrl,
+    voteCount: 0,
+    selectedForCalendar: false,
+  };
 }
