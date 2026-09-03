@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { isAdminEmail } from "@/lib/admin";
 import { signOut } from "@/features/auth/actions";
 
 export default async function DashboardPage() {
@@ -13,7 +14,7 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const isAdmin = user.email?.toLowerCase() === process.env.ADMIN_EMAIL?.toLowerCase();
+  const isAdmin = isAdminEmail(user.email);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 px-4">

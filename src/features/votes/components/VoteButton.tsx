@@ -1,6 +1,9 @@
 "use client";
 
-import { castVote } from "@/features/votes/actions";
+import { useActionState } from "react";
+import { castVote, type VoteState } from "@/features/votes/actions";
+
+const initialState: VoteState = { error: null };
 
 export function VoteButton({
   dogId,
@@ -9,14 +12,21 @@ export function VoteButton({
   dogId: string;
   voteCount: number;
 }) {
+  const [state, formAction, pending] = useActionState(
+    castVote.bind(null, dogId),
+    initialState,
+  );
+
   return (
-    <form action={castVote.bind(null, dogId)}>
+    <form action={formAction} className="flex flex-col gap-1">
       <button
         type="submit"
-        className="w-full rounded-md border px-3 py-1.5 text-sm hover:bg-black hover:text-white"
+        disabled={pending}
+        className="w-full rounded-md border px-3 py-1.5 text-sm hover:bg-black hover:text-white disabled:opacity-50"
       >
         ▲ Vote ({voteCount})
       </button>
+      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
     </form>
   );
 }
