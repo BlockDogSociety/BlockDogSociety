@@ -3,7 +3,12 @@
 import Stripe from "stripe";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { CALENDAR_PRICE_CENTS } from "@/lib/pricing";
+import {
+  CALENDAR_PRICE_CENTS,
+  CURRENCY,
+  SHIPPING_RATE_CA_CENTS,
+  SHIPPING_RATE_INTL_CENTS,
+} from "@/lib/pricing";
 
 export async function createCheckoutSession() {
   const supabase = await createClient();
@@ -23,7 +28,7 @@ export async function createCheckoutSession() {
     line_items: [
       {
         price_data: {
-          currency: "usd",
+          currency: CURRENCY,
           product_data: { name: "Block Dog Society Calendar" },
           unit_amount: CALENDAR_PRICE_CENTS,
         },
@@ -34,6 +39,25 @@ export async function createCheckoutSession() {
     cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/calendar`,
     customer_email: user.email,
     metadata: { buyer_id: user.id },
+    // "ZZ" is Stripe's built-in "Rest of world" code — together with CA/US
+    // this covers every destination without enumerating ~240 countries.
+    shipping_address_collection: { allowed_countries: ["CA", "US", "ZZ"] },
+    shipping_options: [
+      {
+        shipping_rate_data: {
+          type: "fixed_amount",
+          fixed_amount: { amount: SHIPPING_RATE_CA_CENTS, currency: CURRENCY },
+          display_name: "Canada",
+        },
+      },
+      {
+        shipping_rate_data: {
+          type: "fixed_amount",
+          fixed_amount: { amount: SHIPPING_RATE_INTL_CENTS, currency: CURRENCY },
+          display_name: "US & International",
+        },
+      },
+    ],
   });
 
   if (!session.url) {

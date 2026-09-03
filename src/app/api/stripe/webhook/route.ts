@@ -26,10 +26,18 @@ export async function POST(request: NextRequest) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const supabase = createAdminClient();
+    const shipping = session.collected_information?.shipping_details;
 
     await supabase
       .from("calendar_orders")
-      .update({ status: "paid" })
+      .update({
+        status: "paid",
+        // The pre-checkout amount_total we inserted was a guess — this is
+        // the real total, including whichever shipping option they picked.
+        amount_total: session.amount_total,
+        shipping_name: shipping?.name ?? null,
+        shipping_address: shipping?.address ?? null,
+      })
       .eq("stripe_session_id", session.id);
   }
 

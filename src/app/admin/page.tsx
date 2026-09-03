@@ -1,11 +1,13 @@
 import { requireAdmin } from "@/lib/admin";
 import { getTopDogs } from "@/features/dogs/queries";
+import { getPaidOrders } from "@/features/payments/queries";
 import { FinalizeButton } from "@/features/calendar/components/FinalizeButton";
 import { SendLaunchEmailButton } from "@/features/email/components/SendLaunchEmailButton";
 
 export default async function AdminPage() {
   await requireAdmin();
   const standings = await getTopDogs(50);
+  const orders = await getPaidOrders();
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
@@ -49,6 +51,38 @@ export default async function AdminPage() {
           </li>
         ))}
       </ol>
+
+      <h2 className="mt-8 mb-3 font-medium">Orders to fulfill ({orders.length})</h2>
+      {orders.length === 0 ? (
+        <p className="text-sm text-gray-500">No paid orders yet.</p>
+      ) : (
+        <ol className="flex flex-col gap-3">
+          {orders.map((order) => (
+            <li key={order.id} className="rounded-md border px-3 py-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">
+                  {order.shippingName ?? order.buyerEmail ?? "Unknown"}
+                </span>
+                <span className="text-gray-500">
+                  ${(order.amountTotal / 100).toFixed(2)} CAD
+                </span>
+              </div>
+              <div className="text-gray-500">{order.buyerEmail}</div>
+              {order.shippingAddress && (
+                <address className="mt-1 not-italic text-gray-500">
+                  {order.shippingAddress.line1}
+                  {order.shippingAddress.line2 ? `, ${order.shippingAddress.line2}` : ""}
+                  <br />
+                  {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                  {order.shippingAddress.postal_code}
+                  <br />
+                  {order.shippingAddress.country}
+                </address>
+              )}
+            </li>
+          ))}
+        </ol>
+      )}
     </main>
   );
 }

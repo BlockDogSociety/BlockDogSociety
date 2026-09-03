@@ -5,7 +5,7 @@ import { CALENDAR_PRICE_CENTS } from "@/lib/pricing";
 
 export default async function CalendarPage() {
   const dogs = await getSelectedDogs();
-  const priceDisplay = `$${(CALENDAR_PRICE_CENTS / 100).toFixed(2)}`;
+  const priceDisplay = `$${(CALENDAR_PRICE_CENTS / 100).toFixed(2)} CAD`;
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
