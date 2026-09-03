@@ -41,7 +41,7 @@ export async function sendLaunchEmail(
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY!);
-  const from = process.env.RESEND_FROM_EMAIL ?? "Block Dog Society <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM_EMAIL || "Block Dog Society <onboarding@resend.dev>";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   for (const batch of chunk(emails, 100)) {
