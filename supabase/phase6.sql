@@ -5,17 +5,20 @@
 alter table public.dogs
   add column if not exists story text;
 
--- dog_standings needs to expose the new column too.
+-- dog_standings needs to expose the new column too. "story" has to go last:
+-- CREATE OR REPLACE VIEW only allows appending new columns at the end —
+-- inserting it earlier shifts every column after it, which Postgres treats
+-- as renaming them (even though photo_path/vote_count keep their content).
 create or replace view public.dog_standings as
 select
   d.id,
   d.name,
-  d.story,
   d.photo_path,
   d.owner_id,
   d.selected_for_calendar,
   d.created_at,
-  count(v.id)::int as vote_count
+  count(v.id)::int as vote_count,
+  d.story
 from public.dogs d
 left join public.votes v on v.dog_id = d.id
 group by d.id;
