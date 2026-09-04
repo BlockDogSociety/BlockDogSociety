@@ -1,6 +1,17 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { ContactForm } from "@/features/contact/components/ContactForm";
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-6 px-4 py-10">
       <div>

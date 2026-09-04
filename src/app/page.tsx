@@ -1,45 +1,30 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 
-export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center gap-6 px-4 text-center">
-      <h1 className="text-4xl font-bold">🐶 Block Dog Society</h1>
-      <p className="text-gray-500">
-        Upload your dog. Vote for the cutest. Top 12 make the calendar.
-      </p>
+    // Placeholder hero background — swap this gradient for a real photo
+    // (e.g. an <Image fill /> here) once one's picked.
+    <main className="relative flex flex-1 items-end overflow-hidden bg-gradient-to-b from-neutral-700 via-neutral-900 to-black">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.08),transparent_60%)]" />
 
-      <div className="flex gap-3">
-        <Link href="/vote" className="rounded-md border px-5 py-2.5">
-          View dogs &amp; vote
+      <div className="relative z-10 px-6 pb-16 sm:px-10">
+        <p className="text-sm font-semibold tracking-wide text-white/70 uppercase">
+          Dogs of the Cutblock
+        </p>
+        <h1 className="mt-2 max-w-2xl text-5xl font-bold text-white sm:text-6xl">
+          Block Dog Society
+        </h1>
+        <p className="mt-4 max-w-xl text-lg text-white/80">
+          Upload your dog, vote for the cutest, and help build the annual
+          Block Dog Society calendar.
+        </p>
+        <Link
+          href="/vote"
+          className="mt-8 inline-block rounded-md bg-white px-6 py-3 font-medium text-black"
+        >
+          View the dogs
         </Link>
-        {user ? (
-          <Link
-            href="/dashboard"
-            className="rounded-md bg-black px-5 py-2.5 text-white"
-          >
-            Go to dashboard
-          </Link>
-        ) : (
-          <>
-            <Link href="/signup" className="rounded-md bg-black px-5 py-2.5 text-white">
-              Sign up
-            </Link>
-            <Link href="/login" className="rounded-md border px-5 py-2.5">
-              Log in
-            </Link>
-          </>
-        )}
       </div>
-
-      <Link href="/contact" className="text-sm text-gray-500 underline">
-        Recommend a rescue, or ask us something
-      </Link>
     </main>
   );
 }

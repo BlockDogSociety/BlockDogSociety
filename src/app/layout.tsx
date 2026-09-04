@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AppChrome } from "@/components/AppChrome";
+import { isAdminEmail } from "@/lib/admin";
+import { createClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,13 +20,22 @@ export const metadata: Metadata = {
   description: "Upload your dog, vote for the cutest, and get them in the calendar.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AppChrome userEmail={user?.email ?? null} isAdmin={isAdminEmail(user?.email)}>
+          {children}
+        </AppChrome>
+      </body>
     </html>
   );
 }
