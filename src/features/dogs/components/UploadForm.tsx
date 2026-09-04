@@ -87,12 +87,11 @@ export function UploadForm() {
 
       <div className="flex flex-col gap-1">
         <label htmlFor="story" className="text-sm font-medium">
-          Tell us about your dog
+          Tell us about your dog (optional)
         </label>
         <textarea
           id="story"
           name="story"
-          required
           rows={4}
           maxLength={500}
           placeholder="A brief description of your dog, plus the craziest short story about your dog on the block."

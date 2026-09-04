@@ -14,7 +14,7 @@ export async function createDog(
   formData: FormData,
 ): Promise<CreateDogState> {
   const name = formData.get("name") as string;
-  const story = formData.get("story") as string;
+  const story = (formData.get("story") as string) || null;
   const photoPath = formData.get("photoPath") as string;
 
   const supabase = await createClient();
