@@ -27,7 +27,7 @@ export function TopNav({
 
       {userEmail ? (
         <form action={signOut} className="flex shrink-0 items-center gap-3">
-          <span className="max-w-[16ch] truncate text-sm text-black">{userEmail}</span>
+          <span className="text-sm whitespace-nowrap text-black">{userEmail}</span>
           <button
             type="submit"
             className="shrink-0 rounded-md border px-3 py-1.5 text-sm whitespace-nowrap text-black"
