@@ -1,14 +1,11 @@
 import Image from "next/image";
 import { getDogs } from "@/features/dogs/queries";
 import { VoteButton } from "@/features/votes/components/VoteButton";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/current-user";
 import { isAdminEmail } from "@/lib/admin";
 
 export default async function VotePage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   const isAdmin = isAdminEmail(user?.email);
 
   const dogs = await getDogs();

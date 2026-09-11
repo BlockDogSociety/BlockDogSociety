@@ -1,6 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/current-user";
 
 export function isAdminEmail(email: string | null | undefined) {
   const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
@@ -8,10 +8,7 @@ export function isAdminEmail(email: string | null | undefined) {
 }
 
 export async function requireAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user || !isAdminEmail(user.email)) {
     redirect("/");
