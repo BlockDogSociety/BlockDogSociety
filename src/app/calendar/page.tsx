@@ -8,7 +8,7 @@ export default async function CalendarPage() {
   const priceDisplay = `$${(CALENDAR_PRICE_CENTS / 100).toFixed(2)} CAD`;
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
+    <main className="px-6 py-10">
       <h1 className="mb-2 text-3xl font-semibold">The Block Dog Society Calendar</h1>
 
       {dogs.length === 0 ? (
@@ -20,10 +20,10 @@ export default async function CalendarPage() {
           <p className="mb-6 text-gray-500">
             The 12 cutest dogs, voted by you. {priceDisplay} + shipping.
           </p>
-          <div className="mb-8 grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
+          <div className="mb-8 flex flex-col gap-10">
             {dogs.map((dog) => (
-              <div key={dog.id} className="flex flex-col gap-1">
-                <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+              <div key={dog.id} className="flex flex-col gap-2">
+                <div className="relative h-[80vh] w-full overflow-hidden rounded-lg bg-gray-100">
                   <Image
                     src={dog.photoUrl}
                     alt={dog.name}
@@ -32,7 +32,7 @@ export default async function CalendarPage() {
                     className="object-cover"
                   />
                 </div>
-                <p className="text-sm font-medium">{dog.name}</p>
+                <p className="text-lg font-medium">{dog.name}</p>
               </div>
             ))}
           </div>

@@ -16,7 +16,7 @@ export function Sidebar({
   const items = isAdmin ? [...NAV_ITEMS, ADMIN_NAV_ITEM] : NAV_ITEMS;
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col gap-6 border-r px-4 py-6">
+    <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col gap-6 overflow-y-auto border-r px-4 py-6">
       <Link href="/" className="px-2 text-lg font-bold">
         🐶 Block Dog Society
       </Link>
