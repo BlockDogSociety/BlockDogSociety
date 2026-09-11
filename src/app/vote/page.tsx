@@ -1,8 +1,16 @@
 import Image from "next/image";
 import { getDogs } from "@/features/dogs/queries";
 import { VoteButton } from "@/features/votes/components/VoteButton";
+import { createClient } from "@/lib/supabase/server";
+import { isAdminEmail } from "@/lib/admin";
 
 export default async function VotePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isAdmin = isAdminEmail(user?.email);
+
   const dogs = await getDogs();
 
   return (
@@ -14,7 +22,7 @@ export default async function VotePage() {
       ) : (
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
           {dogs.map((dog) => (
-            <div key={dog.id} className="flex flex-col gap-2">
+            <div key={dog.id} className="flex h-full flex-col gap-2">
               <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
                 <Image
                   src={dog.photoUrl}
@@ -25,10 +33,12 @@ export default async function VotePage() {
                 />
               </div>
               <p className="font-medium">{dog.name}</p>
-              {dog.story && (
-                <p className="line-clamp-3 text-sm text-gray-500">{dog.story}</p>
-              )}
-              <VoteButton dogId={dog.id} voteCount={dog.voteCount} />
+              <p className="line-clamp-3 min-h-[3.75rem] text-sm text-gray-500">
+                {dog.story}
+              </p>
+              <div className="mt-auto">
+                <VoteButton dogId={dog.id} voteCount={isAdmin ? dog.voteCount : undefined} />
+              </div>
             </div>
           ))}
         </div>

@@ -10,7 +10,7 @@ export function VoteButton({
   voteCount,
 }: {
   dogId: string;
-  voteCount: number;
+  voteCount?: number;
 }) {
   const [state, formAction, pending] = useActionState(
     castVote.bind(null, dogId),
@@ -24,7 +24,7 @@ export function VoteButton({
         disabled={pending}
         className="w-full rounded-md border px-3 py-1.5 text-sm hover:bg-black hover:text-white disabled:opacity-50"
       >
-        ▲ Vote ({voteCount})
+        ▲ Vote{voteCount !== undefined ? ` (${voteCount})` : ""}
       </button>
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
     </form>
