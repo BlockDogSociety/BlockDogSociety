@@ -18,7 +18,7 @@ export function Sidebar({
   return (
     <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col gap-6 overflow-y-auto border-r px-4 py-6">
       <Link href="/" className="px-2 text-lg font-bold">
-        🐶 Block Dog Society
+        Block Dog Society
       </Link>
 
       <nav className="flex flex-col gap-1">

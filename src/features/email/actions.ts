@@ -49,7 +49,7 @@ export async function sendLaunchEmail(
       batch.map((email) => ({
         from,
         to: email,
-        subject: "The Block Dog Society calendar is here! 🐶",
+        subject: "The Block Dog Society calendar is here!",
         html: `<p>The votes are in — the top 12 cutest dogs made the cut.</p><p><a href="${siteUrl}/calendar">See the calendar and order yours</a>.</p>`,
       })),
     );
