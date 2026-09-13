@@ -14,6 +14,24 @@ export function ResetPasswordForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
+    const supabase = createClient();
+
+    // Our own /forgot-password flow uses the PKCE code exchange.
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        if (error) {
+          setStatus("invalid");
+        } else {
+          setStatus("ready");
+          history.replaceState(null, "", window.location.pathname);
+        }
+      });
+      return;
+    }
+
+    // Supabase dashboard's manual recovery test uses the older
+    // implicit flow, with tokens in the URL hash instead.
     const hash = window.location.hash.startsWith("#")
       ? window.location.hash.slice(1)
       : window.location.hash;
@@ -27,7 +45,6 @@ export function ResetPasswordForm() {
       return;
     }
 
-    const supabase = createClient();
     supabase.auth.setSession({ access_token, refresh_token }).then(({ error }) => {
       if (error) {
         setStatus("invalid");
