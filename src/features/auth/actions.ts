@@ -54,6 +54,24 @@ export async function signIn(
   redirect("/dashboard");
 }
 
+export async function requestPasswordReset(
+  _prevState: AuthActionState,
+  formData: FormData,
+): Promise<AuthActionState> {
+  const email = formData.get("email") as string;
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password`,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  redirect("/forgot-password/check-email");
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
