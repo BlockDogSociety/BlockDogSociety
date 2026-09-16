@@ -112,8 +112,8 @@ export function UploadForm() {
           className="rounded-md border px-3 py-2"
         />
         <p className="text-xs text-gray-500">
-          JPEG or PNG, up to 10MB. Make sure your photo is clear (300 DPI or
-          higher).
+          JPEG or PNG, up to 10MB. Use a landscape (horizontal) photo that is
+          sharp and high resolution (300 DPI or higher).
         </p>
       </div>
 
