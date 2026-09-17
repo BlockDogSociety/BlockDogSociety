@@ -81,6 +81,7 @@ export async function deleteDog(
 
   revalidatePath("/vote");
   revalidatePath("/my-dogs");
+  revalidatePath("/dogs/[id]", "page");
   revalidatePath("/admin");
   revalidatePath("/calendar");
   return { error: null };

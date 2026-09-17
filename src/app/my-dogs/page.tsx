@@ -29,11 +29,13 @@ export default async function MyDogsPage() {
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
           {dogs.map((dog) => (
             <div key={dog.id} className="flex h-full flex-col gap-2">
-              <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
-                <Image src={dog.photoUrl} alt={dog.name} fill unoptimized className="object-cover" />
-              </div>
-              <p className="font-medium">{dog.name}</p>
-              <p className="line-clamp-3 min-h-[3.75rem] text-sm text-gray-500">{dog.story}</p>
+              <Link href={`/dogs/${dog.id}`} className="flex flex-col gap-2">
+                <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+                  <Image src={dog.photoUrl} alt={dog.name} fill unoptimized className="object-cover" />
+                </div>
+                <p className="font-medium">{dog.name}</p>
+                <p className="line-clamp-3 min-h-[3.75rem] text-sm text-gray-500">{dog.story}</p>
+              </Link>
               <div className="mt-auto">
                 <DeleteDogButton dogId={dog.id} dogName={dog.name} />
               </div>

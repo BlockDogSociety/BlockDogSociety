@@ -32,8 +32,8 @@ function MobileNavInner({
   }, [open]);
 
   return (
-    <div className="md:hidden">
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b bg-white px-4 py-3">
+    <div className="sticky top-0 z-20 md:hidden">
+      <header className="flex items-center justify-between border-b bg-white px-4 py-3">
         <Link href="/" className="text-lg font-bold">
           Block Dog Society
         </Link>
