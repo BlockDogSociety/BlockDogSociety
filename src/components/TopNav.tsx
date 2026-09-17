@@ -12,7 +12,7 @@ export function TopNav({
   const items = isAdmin ? [...NAV_ITEMS, ADMIN_NAV_ITEM] : NAV_ITEMS;
 
   return (
-    <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b bg-white px-6 py-3 text-black">
+    <header className="sticky top-0 z-10 hidden flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b bg-white px-6 py-3 text-black md:flex">
       <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
         {items.map((item) => (
           <Link

@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
 import { TopNav } from "@/components/TopNav";
+import { MobileNav } from "@/components/MobileNav";
 
 const NO_CHROME_PREFIXES = ["/login", "/signup"];
 
@@ -24,6 +25,7 @@ export function AppChrome({
   if (pathname === "/") {
     return (
       <>
+        <MobileNav userEmail={userEmail} isAdmin={isAdmin} />
         <TopNav userEmail={userEmail} isAdmin={isAdmin} />
         {children}
       </>
@@ -31,9 +33,12 @@ export function AppChrome({
   }
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar userEmail={userEmail} isAdmin={isAdmin} />
-      <div className="min-w-0 flex-1">{children}</div>
-    </div>
+    <>
+      <MobileNav userEmail={userEmail} isAdmin={isAdmin} />
+      <div className="flex min-h-screen">
+        <Sidebar userEmail={userEmail} isAdmin={isAdmin} />
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
+    </>
   );
 }
