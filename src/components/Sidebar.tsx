@@ -13,7 +13,7 @@ export function Sidebar({
       <Link href="/" className="px-2 text-lg font-bold">
         Block Dog Society
       </Link>
-      <NavLinks isAdmin={isAdmin} />
+      <NavLinks signedIn={userEmail !== null} isAdmin={isAdmin} />
       <div className="mt-auto">
         <AccountLinks userEmail={userEmail} />
       </div>

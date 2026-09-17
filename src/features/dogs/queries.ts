@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type DogStanding = {
   id: string;
+  ownerId: string | null;
   name: string;
   story: string | null;
   photoUrl: string;
@@ -24,6 +25,7 @@ function toStanding(
 ): DogStanding {
   return {
     id: row.id,
+    ownerId: null,
     name: row.name,
     story: row.story,
     photoUrl: supabase.storage.from("dog-photos").getPublicUrl(row.photo_path)
@@ -40,7 +42,7 @@ export async function getDogs(): Promise<DogStanding[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("dogs")
-    .select("id, name, story, photo_path, votes(count)")
+    .select("id, owner_id, name, story, photo_path, votes(count)")
     .order("created_at", { ascending: false });
 
   if (error || !data) {
@@ -49,6 +51,7 @@ export async function getDogs(): Promise<DogStanding[]> {
 
   return data.map((dog) => ({
     id: dog.id,
+    ownerId: dog.owner_id,
     name: dog.name,
     story: dog.story,
     photoUrl: supabase.storage.from("dog-photos").getPublicUrl(dog.photo_path)
@@ -56,6 +59,11 @@ export async function getDogs(): Promise<DogStanding[]> {
     voteCount: dog.votes?.[0]?.count ?? 0,
     selectedForCalendar: false,
   }));
+}
+
+export async function getDogsByOwner(ownerId: string): Promise<DogStanding[]> {
+  const dogs = await getDogs();
+  return dogs.filter((dog) => dog.ownerId === ownerId);
 }
 
 // The functions below require phase3.sql (the dog_standings view) to have
@@ -94,7 +102,7 @@ export async function getDogById(id: string): Promise<DogStanding | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("dogs")
-    .select("id, name, story, photo_path")
+    .select("id, owner_id, name, story, photo_path")
     .eq("id", id)
     .single();
 
@@ -104,6 +112,7 @@ export async function getDogById(id: string): Promise<DogStanding | null> {
 
   return {
     id: data.id,
+    ownerId: data.owner_id,
     name: data.name,
     story: data.story,
     photoUrl: supabase.storage.from("dog-photos").getPublicUrl(data.photo_path)

@@ -68,7 +68,7 @@ function MobileNavInner({
                 Close
               </button>
             </div>
-            <NavLinks isAdmin={isAdmin} onNavigate={close} />
+            <NavLinks signedIn={userEmail !== null} isAdmin={isAdmin} onNavigate={close} />
             <div className="mt-auto">
               <AccountLinks userEmail={userEmail} onNavigate={close} />
             </div>

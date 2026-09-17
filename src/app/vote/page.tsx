@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getDogs } from "@/features/dogs/queries";
 import { VoteButton } from "@/features/votes/components/VoteButton";
+import { DeleteDogButton } from "@/features/dogs/components/DeleteDogButton";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import { isAdminEmail } from "@/lib/admin";
 
@@ -33,8 +34,11 @@ export default async function VotePage() {
               <p className="line-clamp-3 min-h-[3.75rem] text-sm text-gray-500">
                 {dog.story}
               </p>
-              <div className="mt-auto">
+              <div className="mt-auto flex flex-col gap-2">
                 <VoteButton dogId={dog.id} voteCount={isAdmin ? dog.voteCount : undefined} />
+                {(isAdmin || (user && dog.ownerId === user.id)) && (
+                  <DeleteDogButton dogId={dog.id} dogName={dog.name} />
+                )}
               </div>
             </div>
           ))}

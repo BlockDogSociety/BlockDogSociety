@@ -5,4 +5,6 @@ export const NAV_ITEMS = [
   { href: "/contact", label: "Questions & Comments" },
 ] as const;
 
+export const MY_DOGS_NAV_ITEM = { href: "/my-dogs", label: "Your Submissions" } as const;
+
 export const ADMIN_NAV_ITEM = { href: "/admin", label: "Admin" } as const;

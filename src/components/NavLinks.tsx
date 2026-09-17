@@ -2,18 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_ITEMS, ADMIN_NAV_ITEM } from "@/components/nav-items";
+import { NAV_ITEMS, MY_DOGS_NAV_ITEM, ADMIN_NAV_ITEM } from "@/components/nav-items";
 import { signOut } from "@/features/auth/actions";
 
+export function navItemsFor(signedIn: boolean, isAdmin: boolean) {
+  return [
+    ...NAV_ITEMS,
+    ...(signedIn ? [MY_DOGS_NAV_ITEM] : []),
+    ...(isAdmin ? [ADMIN_NAV_ITEM] : []),
+  ];
+}
+
 export function NavLinks({
+  signedIn,
   isAdmin,
   onNavigate,
 }: {
+  signedIn: boolean;
   isAdmin: boolean;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
-  const items = isAdmin ? [...NAV_ITEMS, ADMIN_NAV_ITEM] : NAV_ITEMS;
+  const items = navItemsFor(signedIn, isAdmin);
 
   return (
     <nav className="flex flex-col gap-1">

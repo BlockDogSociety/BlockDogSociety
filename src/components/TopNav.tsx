@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NAV_ITEMS, ADMIN_NAV_ITEM } from "@/components/nav-items";
+import { navItemsFor } from "@/components/NavLinks";
 import { signOut } from "@/features/auth/actions";
 
 export function TopNav({
@@ -9,7 +9,7 @@ export function TopNav({
   userEmail: string | null;
   isAdmin: boolean;
 }) {
-  const items = isAdmin ? [...NAV_ITEMS, ADMIN_NAV_ITEM] : NAV_ITEMS;
+  const items = navItemsFor(userEmail !== null, isAdmin);
 
   return (
     <header className="sticky top-0 z-10 hidden flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b bg-white px-6 py-3 text-black md:flex">
