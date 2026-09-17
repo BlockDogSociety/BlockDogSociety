@@ -5,6 +5,7 @@ import { getDogs } from "@/features/dogs/queries";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import { isAdminEmail } from "@/lib/admin";
 import { VoteButton } from "@/features/votes/components/VoteButton";
+import { getVotedDogIds } from "@/features/votes/queries";
 import { DeleteDogButton } from "@/features/dogs/components/DeleteDogButton";
 import { ScrollToHash } from "@/components/ScrollToHash";
 
@@ -14,7 +15,8 @@ export default async function DogViewerPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [user, dogs] = await Promise.all([getCurrentUser(), getDogs()]);
+  const user = await getCurrentUser();
+  const [dogs, votedIds] = await Promise.all([getDogs(), getVotedDogIds(user?.id)]);
   const isAdmin = isAdminEmail(user?.email);
 
   if (!dogs.some((dog) => dog.id === id)) {
@@ -52,7 +54,11 @@ export default async function DogViewerPage({
               <p className="whitespace-pre-line text-gray-700">{dog.story}</p>
             )}
             <div className="flex max-w-xs flex-col gap-2">
-              <VoteButton dogId={dog.id} voteCount={isAdmin ? dog.voteCount : undefined} />
+              <VoteButton
+                  dogId={dog.id}
+                  voted={votedIds.has(dog.id)}
+                  voteCount={isAdmin ? dog.voteCount : undefined}
+                />
               {(isAdmin || (user && dog.ownerId === user.id)) && (
                 <DeleteDogButton dogId={dog.id} dogName={dog.name} />
               )}

@@ -7,7 +7,7 @@ import { isAdminEmail } from "@/lib/admin";
 
 const MAX_VOTES_PER_USER = 12;
 
-export type VoteState = { error: string | null };
+export type VoteState = { error: string | null; voted?: boolean };
 
 // The admin can vote unlimited times, including repeatedly for the same
 // dog — everyone else gets at most MAX_VOTES_PER_USER distinct dogs, one
@@ -36,7 +36,7 @@ export async function castVote(
       .maybeSingle();
 
     if (existingVote) {
-      return { error: "You've already voted for this dog." };
+      return { error: null, voted: true };
     }
 
     const { count } = await supabase
@@ -58,5 +58,6 @@ export async function castVote(
   }
 
   revalidatePath("/vote");
-  return { error: null };
+  revalidatePath("/dogs/[id]", "page");
+  return { error: null, voted: true };
 }

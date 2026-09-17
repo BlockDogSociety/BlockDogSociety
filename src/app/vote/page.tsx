@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getDogs } from "@/features/dogs/queries";
 import { VoteButton } from "@/features/votes/components/VoteButton";
+import { getVotedDogIds } from "@/features/votes/queries";
 import { DeleteDogButton } from "@/features/dogs/components/DeleteDogButton";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import { isAdminEmail } from "@/lib/admin";
@@ -10,7 +11,7 @@ export default async function VotePage() {
   const user = await getCurrentUser();
   const isAdmin = isAdminEmail(user?.email);
 
-  const dogs = await getDogs();
+  const [dogs, votedIds] = await Promise.all([getDogs(), getVotedDogIds(user?.id)]);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
@@ -38,7 +39,11 @@ export default async function VotePage() {
                 </p>
               </Link>
               <div className="mt-auto flex flex-col gap-2">
-                <VoteButton dogId={dog.id} voteCount={isAdmin ? dog.voteCount : undefined} />
+                <VoteButton
+                  dogId={dog.id}
+                  voted={votedIds.has(dog.id)}
+                  voteCount={isAdmin ? dog.voteCount : undefined}
+                />
                 {(isAdmin || (user && dog.ownerId === user.id)) && (
                   <DeleteDogButton dogId={dog.id} dogName={dog.name} />
                 )}
