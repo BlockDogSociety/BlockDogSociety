@@ -26,7 +26,7 @@ export default async function VotePage() {
               <Link href={`/dogs/${dog.id}`} className="flex flex-col gap-2">
                 <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
                   <Image
-                    src={dog.photoUrl}
+                    src={dog.thumbUrl}
                     alt={dog.name}
                     fill
                     unoptimized

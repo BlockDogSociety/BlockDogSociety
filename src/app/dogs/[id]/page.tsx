@@ -41,7 +41,7 @@ export default async function DogViewerPage({
           <article key={dog.id} id={dog.id} className="scroll-mt-[7.5rem] flex flex-col gap-3 md:scroll-mt-20">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100">
               <Image
-                src={dog.photoUrl}
+                src={dog.displayUrl}
                 alt={dog.name}
                 fill
                 unoptimized

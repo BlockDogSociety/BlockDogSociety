@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
-import { getTopDogs } from "@/features/dogs/queries";
+import { getTopDogs, getOwnerEmails } from "@/features/dogs/queries";
 import { getPaidOrders } from "@/features/payments/queries";
 import { FinalizeButton } from "@/features/calendar/components/FinalizeButton";
 import { SendLaunchEmailButton } from "@/features/email/components/SendLaunchEmailButton";
@@ -8,7 +8,7 @@ import { SendLaunchEmailButton } from "@/features/email/components/SendLaunchEma
 export default async function AdminPage() {
   await requireAdmin();
   const standings = await getTopDogs(50);
-  const orders = await getPaidOrders();
+  const [ownerEmails, orders] = await Promise.all([getOwnerEmails(standings), getPaidOrders()]);
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
@@ -49,9 +49,14 @@ export default async function AdminPage() {
             key={dog.id}
             className="flex items-center justify-between rounded-md border px-3 py-2"
           >
-            <span>
-              {i + 1}. {dog.name}
-              {dog.selectedForCalendar ? " ⭐" : ""}
+            <span className="flex min-w-0 flex-col">
+              <span>
+                {i + 1}. {dog.name}
+                {dog.selectedForCalendar ? " ⭐" : ""}
+              </span>
+              <span className="truncate text-xs text-gray-500">
+                {(dog.ownerId && ownerEmails.get(dog.ownerId)) ?? "owner unknown"}
+              </span>
             </span>
             <span className="flex items-center gap-3">
               <span className="text-gray-500">{dog.voteCount} votes</span>

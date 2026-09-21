@@ -25,7 +25,7 @@ export default async function CalendarPage() {
               <div key={dog.id} className="flex flex-col gap-2">
                 <div className="relative h-[80vh] w-full overflow-hidden rounded-lg bg-gray-100">
                   <Image
-                    src={dog.photoUrl}
+                    src={dog.displayUrl}
                     alt={dog.name}
                     fill
                     unoptimized

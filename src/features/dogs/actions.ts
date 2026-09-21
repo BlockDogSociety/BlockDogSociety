@@ -20,6 +20,8 @@ export async function createDog(
   const name = formData.get("name") as string;
   const story = (formData.get("story") as string) || null;
   const photoPath = formData.get("photoPath") as string;
+  const thumbPath = (formData.get("thumbPath") as string) || null;
+  const displayPath = (formData.get("displayPath") as string) || null;
 
   const supabase = await createClient();
   const {
@@ -39,6 +41,8 @@ export async function createDog(
     name,
     story,
     photo_path: photoPath,
+    thumb_path: thumbPath,
+    display_path: displayPath,
   });
 
   if (error) {
@@ -61,7 +65,7 @@ export async function deleteDog(
   const admin = createAdminClient();
   const { data: dog } = await admin
     .from("dogs")
-    .select("owner_id, photo_path")
+    .select("owner_id, photo_path, thumb_path, display_path")
     .eq("id", dogId)
     .maybeSingle();
 
@@ -77,7 +81,9 @@ export async function deleteDog(
   if (error) {
     return { error: error.message };
   }
-  await admin.storage.from("dog-photos").remove([dog.photo_path]);
+  await admin.storage
+    .from("dog-photos")
+    .remove([dog.photo_path, dog.thumb_path, dog.display_path].filter((p): p is string => !!p));
 
   revalidatePath("/vote");
   revalidatePath("/my-dogs");

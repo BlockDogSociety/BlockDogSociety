@@ -3,6 +3,12 @@
 import { startTransition, useActionState, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { createDog, type CreateDogState } from "@/features/dogs/actions";
+import {
+  resizeImage,
+  THUMB_MAX_EDGE,
+  DISPLAY_MAX_EDGE,
+  IMMUTABLE_CACHE_SECONDS,
+} from "@/features/dogs/resize";
 
 const initialState: CreateDogState = { error: null };
 
@@ -49,13 +55,35 @@ export function UploadForm() {
     }
 
     const extension = photo.name.split(".").pop() ?? "jpg";
-    const path = `${user.id}/${crypto.randomUUID()}.${extension}`;
+    const base = `${user.id}/${crypto.randomUUID()}`;
+    const path = `${base}.${extension}`;
+    const thumbPath = `${base}-thumb.jpg`;
+    const displayPath = `${base}-display.jpg`;
 
-    const { error } = await supabase.storage.from("dog-photos").upload(path, photo);
+    let thumb: Blob, display: Blob;
+    try {
+      [thumb, display] = await Promise.all([
+        resizeImage(photo, THUMB_MAX_EDGE),
+        resizeImage(photo, DISPLAY_MAX_EDGE),
+      ]);
+    } catch {
+      setUploadError("We couldn't read that image. Try a different photo.");
+      setUploading(false);
+      return;
+    }
+
+    const bucket = supabase.storage.from("dog-photos");
+    const opts = { cacheControl: IMMUTABLE_CACHE_SECONDS };
+    const results = await Promise.all([
+      bucket.upload(path, photo, opts),
+      bucket.upload(thumbPath, thumb, { ...opts, contentType: "image/jpeg" }),
+      bucket.upload(displayPath, display, { ...opts, contentType: "image/jpeg" }),
+    ]);
     setUploading(false);
 
-    if (error) {
-      setUploadError(error.message);
+    const failed = results.find((r) => r.error);
+    if (failed?.error) {
+      setUploadError(failed.error.message);
       return;
     }
 
@@ -63,6 +91,8 @@ export function UploadForm() {
     dogFormData.set("name", name);
     dogFormData.set("story", story);
     dogFormData.set("photoPath", path);
+    dogFormData.set("thumbPath", thumbPath);
+    dogFormData.set("displayPath", displayPath);
     startTransition(() => {
       formAction(dogFormData);
     });
