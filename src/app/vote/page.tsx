@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { DogImage, GRID_SIZES } from "@/components/DogImage";
 import { getDogs } from "@/features/dogs/queries";
 import { VoteButton } from "@/features/votes/components/VoteButton";
 import { getVotedDogIds } from "@/features/votes/queries";
@@ -25,13 +25,7 @@ export default async function VotePage() {
             <div key={dog.id} className="flex h-full flex-col gap-2">
               <Link href={`/dogs/${dog.id}`} className="flex flex-col gap-2">
                 <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
-                  <Image
-                    src={dog.thumbUrl}
-                    alt={dog.name}
-                    fill
-                    unoptimized
-                    className="object-cover"
-                  />
+                  <DogImage src={dog.thumbUrl} alt={dog.name} sizes={GRID_SIZES} />
                 </div>
                 <p className="font-medium">{dog.name}</p>
                 <p className="line-clamp-3 min-h-[3.75rem] text-sm text-gray-500">

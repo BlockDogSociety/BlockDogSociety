@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { DogImage } from "@/components/DogImage";
 import { getSelectedDogs } from "@/features/dogs/queries";
 import { BuyButton } from "@/features/payments/components/BuyButton";
 import { CALENDAR_PRICE_CENTS } from "@/lib/pricing";
@@ -24,12 +24,10 @@ export default async function CalendarPage() {
             {dogs.map((dog) => (
               <div key={dog.id} className="flex flex-col gap-2">
                 <div className="relative h-[80vh] w-full overflow-hidden rounded-lg bg-gray-100">
-                  <Image
+                  <DogImage
                     src={dog.displayUrl}
                     alt={dog.name}
-                    fill
-                    unoptimized
-                    className="object-cover"
+                    sizes="(min-width: 1024px) 1024px, 100vw"
                   />
                 </div>
                 <p className="text-lg font-medium">{dog.name}</p>

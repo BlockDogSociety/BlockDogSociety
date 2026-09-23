@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { DogImage } from "@/components/DogImage";
 import { notFound } from "next/navigation";
 import { getDogs } from "@/features/dogs/queries";
 import { getCurrentUser } from "@/lib/supabase/current-user";
@@ -40,11 +40,9 @@ export default async function DogViewerPage({
         {dogs.map((dog) => (
           <article key={dog.id} id={dog.id} className="scroll-mt-[7.5rem] flex flex-col gap-3 md:scroll-mt-20">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100">
-              <Image
+              <DogImage
                 src={dog.displayUrl}
                 alt={dog.name}
-                fill
-                unoptimized
                 sizes="(min-width: 768px) 768px, 100vw"
                 className="object-contain"
               />
