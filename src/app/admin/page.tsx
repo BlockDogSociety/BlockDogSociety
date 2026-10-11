@@ -59,6 +59,13 @@ export default async function AdminPage() {
               </span>
             </span>
             <span className="flex items-center gap-3">
+              {dog.selectedForCalendar && (
+                <span
+                  className={`text-xs ${dog.hasCalendarCrop ? "text-green-700" : "text-amber-700"}`}
+                >
+                  {dog.hasCalendarCrop ? "framed" : "needs framing"}
+                </span>
+              )}
               <span className="text-gray-500">{dog.voteCount} votes</span>
               <Link href={`/admin/crop/${dog.id}`} className="text-sm underline">
                 Crop

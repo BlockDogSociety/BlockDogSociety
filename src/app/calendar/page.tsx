@@ -23,9 +23,9 @@ export default async function CalendarPage() {
           <div className="mb-8 flex flex-col gap-10">
             {dogs.map((dog) => (
               <div key={dog.id} className="flex flex-col gap-2">
-                <div className="relative h-[80vh] w-full overflow-hidden rounded-lg bg-gray-100">
+                <div className="relative aspect-[3/2] w-full overflow-hidden rounded-lg bg-gray-100">
                   <DogImage
-                    src={dog.displayUrl}
+                    src={dog.calendarUrl}
                     alt={dog.name}
                     sizes="(min-width: 1024px) 1024px, 100vw"
                   />

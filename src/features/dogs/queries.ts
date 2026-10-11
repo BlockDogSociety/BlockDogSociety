@@ -9,8 +9,11 @@ export type DogStanding = {
   photoUrl: string;
   /** ~640px, for grids. */
   thumbUrl: string;
-  /** ~1600px, for the full-size viewer and calendar. */
+  /** ~1600px, for the full-size viewer. */
   displayUrl: string;
+  /** Admin-framed 3:2 crop for the calendar page; falls back to displayUrl. */
+  calendarUrl: string;
+  hasCalendarCrop: boolean;
   voteCount: number;
   selectedForCalendar: boolean;
 };
@@ -23,24 +26,33 @@ type StandingRow = {
   photo_path: string;
   thumb_path: string | null;
   display_path: string | null;
+  calendar_crop_path: string | null;
   vote_count: number;
   selected_for_calendar: boolean;
 };
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
 
-const PHOTO_COLUMNS = "photo_path, thumb_path, display_path";
+const PHOTO_COLUMNS = "photo_path, thumb_path, display_path, calendar_crop_path";
 
 function photoUrls(
   supabase: Supabase,
-  row: { photo_path: string; thumb_path: string | null; display_path: string | null },
+  row: {
+    photo_path: string;
+    thumb_path: string | null;
+    display_path: string | null;
+    calendar_crop_path?: string | null;
+  },
 ) {
   const url = (path: string) =>
     supabase.storage.from("dog-photos").getPublicUrl(path).data.publicUrl;
+  const display = row.display_path ?? row.photo_path;
   return {
     photoUrl: url(row.photo_path),
     thumbUrl: url(row.thumb_path ?? row.photo_path),
-    displayUrl: url(row.display_path ?? row.photo_path),
+    displayUrl: url(display),
+    calendarUrl: url(row.calendar_crop_path ?? display),
+    hasCalendarCrop: Boolean(row.calendar_crop_path),
   };
 }
 

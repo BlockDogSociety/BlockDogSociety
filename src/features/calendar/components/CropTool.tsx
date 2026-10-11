@@ -1,62 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import ReactCrop, {
-  centerCrop,
-  makeAspectCrop,
-  type Crop,
-  type PixelCrop,
-} from "react-image-crop";
+import ReactCrop, { type Crop, type PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import { centeredAspectCrop, exportCrop } from "@/features/calendar/crop-utils";
 
 const DPI = 300;
 const INCHES = [8.5, 11] as const;
-
-function centeredAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number): Crop {
-  return centerCrop(
-    makeAspectCrop({ unit: "%", width: 90 }, aspect, mediaWidth, mediaHeight),
-    mediaWidth,
-    mediaHeight,
-  );
-}
-
-async function exportCrop(
-  image: HTMLImageElement,
-  crop: PixelCrop,
-  outputWidth: number,
-  outputHeight: number,
-): Promise<Blob> {
-  const canvas = document.createElement("canvas");
-  canvas.width = outputWidth;
-  canvas.height = outputHeight;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) {
-    throw new Error("Canvas not supported in this browser.");
-  }
-
-  const scaleX = image.naturalWidth / image.width;
-  const scaleY = image.naturalHeight / image.height;
-
-  ctx.drawImage(
-    image,
-    crop.x * scaleX,
-    crop.y * scaleY,
-    crop.width * scaleX,
-    crop.height * scaleY,
-    0,
-    0,
-    outputWidth,
-    outputHeight,
-  );
-
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error("Failed to export image."))),
-      "image/jpeg",
-      0.95,
-    );
-  });
-}
 
 export function CropTool({ photoUrl, dogName }: { photoUrl: string; dogName: string }) {
   const [portrait, setPortrait] = useState(true);
