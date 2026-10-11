@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
+import { VOTING_OPEN } from "@/lib/contest";
 
 const MAX_VOTES_PER_USER = 12;
 
@@ -28,6 +29,10 @@ export async function castVote(
   }
 
   if (!isAdminEmail(user.email)) {
+    if (!VOTING_OPEN) {
+      return { error: "Voting is closed." };
+    }
+
     const { data: existingVote } = await supabase
       .from("votes")
       .select("id")

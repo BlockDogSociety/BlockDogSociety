@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getDogs } from "@/features/dogs/queries";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import { isAdminEmail } from "@/lib/admin";
+import { VOTING_OPEN } from "@/lib/contest";
 import { VoteButton } from "@/features/votes/components/VoteButton";
 import { getVotedDogIds } from "@/features/votes/queries";
 import { DeleteDogButton } from "@/features/dogs/components/DeleteDogButton";
@@ -52,11 +53,13 @@ export default async function DogViewerPage({
               <p className="whitespace-pre-line text-gray-700">{dog.story}</p>
             )}
             <div className="flex max-w-xs flex-col gap-2">
-              <VoteButton
+              {(VOTING_OPEN || isAdmin) && (
+                <VoteButton
                   dogId={dog.id}
                   voted={votedIds.has(dog.id)}
                   voteCount={isAdmin ? dog.voteCount : undefined}
                 />
+              )}
               {(isAdmin || (user && dog.ownerId === user.id)) && (
                 <DeleteDogButton dogId={dog.id} dogName={dog.name} />
               )}

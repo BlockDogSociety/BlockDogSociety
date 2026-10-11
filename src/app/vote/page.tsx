@@ -6,6 +6,7 @@ import { getVotedDogIds } from "@/features/votes/queries";
 import { DeleteDogButton } from "@/features/dogs/components/DeleteDogButton";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import { isAdminEmail } from "@/lib/admin";
+import { VOTING_OPEN } from "@/lib/contest";
 
 export default async function VotePage() {
   const user = await getCurrentUser();
@@ -15,7 +16,9 @@ export default async function VotePage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="mb-8 text-3xl font-semibold">Vote for the cutest dog</h1>
+      <h1 className="mb-8 text-3xl font-semibold">
+        {VOTING_OPEN ? "Vote for the cutest dog" : "This year\u2019s dogs"}
+      </h1>
 
       {dogs.length === 0 ? (
         <p className="text-gray-500">No dogs yet — be the first to upload one.</p>
@@ -33,11 +36,13 @@ export default async function VotePage() {
                 </p>
               </Link>
               <div className="mt-auto flex flex-col gap-2">
-                <VoteButton
-                  dogId={dog.id}
-                  voted={votedIds.has(dog.id)}
-                  voteCount={isAdmin ? dog.voteCount : undefined}
-                />
+                {(VOTING_OPEN || isAdmin) && (
+                  <VoteButton
+                    dogId={dog.id}
+                    voted={votedIds.has(dog.id)}
+                    voteCount={isAdmin ? dog.voteCount : undefined}
+                  />
+                )}
                 {(isAdmin || (user && dog.ownerId === user.id)) && (
                   <DeleteDogButton dogId={dog.id} dogName={dog.name} />
                 )}

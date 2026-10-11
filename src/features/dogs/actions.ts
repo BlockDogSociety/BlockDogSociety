@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import { isAdminEmail } from "@/lib/admin";
+import { SUBMISSIONS_OPEN } from "@/lib/contest";
 
 export type CreateDogState = { error: string | null };
 export type DeleteDogState = { error: string | null };
@@ -22,6 +23,10 @@ export async function createDog(
   const photoPath = formData.get("photoPath") as string;
   const thumbPath = (formData.get("thumbPath") as string) || null;
   const displayPath = (formData.get("displayPath") as string) || null;
+
+  if (!SUBMISSIONS_OPEN) {
+    return { error: "Submissions are closed." };
+  }
 
   const supabase = await createClient();
   const {
