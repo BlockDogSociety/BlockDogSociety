@@ -8,19 +8,20 @@ import { setCalendarCrop } from "@/features/calendar/actions";
 import {
   CALENDAR_ASPECT,
   CALENDAR_OUTPUT_WIDTH,
-  CALENDAR_OUTPUT_HEIGHT,
   centeredAspectCrop,
   exportCrop,
 } from "@/features/calendar/crop-utils";
 
 export function CalendarCropTool({
   dogId,
-  photoUrl,
+  sourceUrl,
   dogName,
   hasExistingCrop,
 }: {
   dogId: string;
-  photoUrl: string;
+  /** The ~1600px display copy, not the original: browsers fail to crop very
+   *  large photos and silently produce a blank image. */
+  sourceUrl: string;
   dogName: string;
   hasExistingCrop: boolean;
 }) {
@@ -41,13 +42,12 @@ export function CalendarCropTool({
     setStatus("saving");
 
     try {
-      const blob = await exportCrop(
-        imgRef.current,
-        completedCrop,
-        CALENDAR_OUTPUT_WIDTH,
-        CALENDAR_OUTPUT_HEIGHT,
-        0.9,
-      );
+      // Never upscale: a portrait source has fewer than 1800px of width to give.
+      const img = imgRef.current;
+      const sourcePx = Math.round(completedCrop.width * (img.naturalWidth / img.width));
+      const width = Math.min(CALENDAR_OUTPUT_WIDTH, Math.max(900, sourcePx));
+      const height = Math.round(width / CALENDAR_ASPECT);
+      const blob = await exportCrop(img, completedCrop, width, height, 0.9);
 
       const supabase = createClient();
       const {
@@ -90,7 +90,7 @@ export function CalendarCropTool({
         {/* eslint-disable-next-line @next/next/no-img-element -- react-image-crop needs a plain, ref-accessible <img>, not next/image's wrapper */}
         <img
           ref={imgRef}
-          src={photoUrl}
+          src={sourceUrl}
           alt={dogName}
           crossOrigin="anonymous"
           onLoad={onImageLoad}

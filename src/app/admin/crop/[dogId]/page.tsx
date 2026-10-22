@@ -25,7 +25,7 @@ export default async function CropPage({
         <h2 className="mb-3 font-medium">Calendar page photo</h2>
         <CalendarCropTool
           dogId={dog.id}
-          photoUrl={dog.photoUrl}
+          sourceUrl={dog.displayUrl}
           dogName={dog.name}
           hasExistingCrop={dog.hasCalendarCrop}
         />
