@@ -6,11 +6,21 @@ import { createClient } from "@/lib/supabase/server";
 import {
   CALENDAR_PRICE_CENTS,
   CURRENCY,
+  MAX_CALENDARS_PER_ORDER,
+  SHIPPING_EXTRA_CA_CENTS,
+  SHIPPING_EXTRA_INTL_CENTS,
   SHIPPING_RATE_CA_CENTS,
   SHIPPING_RATE_INTL_CENTS,
+  shippingCents,
 } from "@/lib/pricing";
 
-export async function createCheckoutSession() {
+export async function createCheckoutSession(quantity: number) {
+  // Comes from the browser, so clamp it rather than trusting it.
+  const qty = Math.min(
+    MAX_CALENDARS_PER_ORDER,
+    Math.max(1, Math.floor(Number(quantity) || 1)),
+  );
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -32,7 +42,7 @@ export async function createCheckoutSession() {
           product_data: { name: "Block Dog Society Calendar" },
           unit_amount: CALENDAR_PRICE_CENTS,
         },
-        quantity: 1,
+        quantity: qty,
       },
     ],
     success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/calendar/success?session_id={CHECKOUT_SESSION_ID}`,
@@ -46,14 +56,20 @@ export async function createCheckoutSession() {
       {
         shipping_rate_data: {
           type: "fixed_amount",
-          fixed_amount: { amount: SHIPPING_RATE_CA_CENTS, currency: CURRENCY },
+          fixed_amount: {
+            amount: shippingCents(qty, SHIPPING_RATE_CA_CENTS, SHIPPING_EXTRA_CA_CENTS),
+            currency: CURRENCY,
+          },
           display_name: "Canada",
         },
       },
       {
         shipping_rate_data: {
           type: "fixed_amount",
-          fixed_amount: { amount: SHIPPING_RATE_INTL_CENTS, currency: CURRENCY },
+          fixed_amount: {
+            amount: shippingCents(qty, SHIPPING_RATE_INTL_CENTS, SHIPPING_EXTRA_INTL_CENTS),
+            currency: CURRENCY,
+          },
           display_name: "US & International",
         },
       },
@@ -68,7 +84,8 @@ export async function createCheckoutSession() {
     buyer_id: user.id,
     stripe_session_id: session.id,
     status: "pending",
-    amount_total: CALENDAR_PRICE_CENTS,
+    quantity: qty,
+    amount_total: CALENDAR_PRICE_CENTS * qty,
   });
 
   if (error) {

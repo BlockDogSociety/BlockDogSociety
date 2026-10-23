@@ -87,7 +87,7 @@ export default async function AdminPage() {
                   {order.shippingName ?? order.buyerEmail ?? "Unknown"}
                 </span>
                 <span className="text-gray-500">
-                  ${(order.amountTotal / 100).toFixed(2)} CAD
+                  {order.quantity}&times; &middot; ${(order.amountTotal / 100).toFixed(2)} CAD
                 </span>
               </div>
               <div className="text-gray-500">{order.buyerEmail}</div>

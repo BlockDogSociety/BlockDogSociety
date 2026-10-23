@@ -5,6 +5,7 @@ export type PaidOrder = {
   id: string;
   createdAt: string;
   amountTotal: number;
+  quantity: number;
   buyerEmail: string | null;
   shippingName: string | null;
   shippingAddress: {
@@ -24,7 +25,7 @@ export async function getPaidOrders(): Promise<PaidOrder[]> {
 
   const { data: orders, error } = await supabase
     .from("calendar_orders")
-    .select("id, created_at, amount_total, buyer_id, shipping_name, shipping_address")
+    .select("id, created_at, amount_total, quantity, buyer_id, shipping_name, shipping_address")
     .eq("status", "paid")
     .order("created_at", { ascending: false });
 
@@ -39,6 +40,7 @@ export async function getPaidOrders(): Promise<PaidOrder[]> {
       id: order.id,
       createdAt: order.created_at,
       amountTotal: order.amount_total,
+      quantity: order.quantity ?? 1,
       buyerEmail: data.user?.email ?? null,
       shippingName: order.shipping_name,
       shippingAddress: order.shipping_address,

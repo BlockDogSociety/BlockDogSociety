@@ -18,7 +18,7 @@ export default async function CalendarPage() {
       ) : (
         <>
           <p className="mb-6 text-gray-500">
-            The 12 cutest dogs, voted by you. {priceDisplay} + shipping.
+            The 12 cutest dogs, voted by you. {priceDisplay} each + shipping.
           </p>
           <div className="mb-8 flex flex-col gap-10">
             {dogs.map((dog) => (
@@ -34,7 +34,7 @@ export default async function CalendarPage() {
               </div>
             ))}
           </div>
-          <BuyButton priceDisplay={priceDisplay} />
+          <BuyButton />
         </>
       )}
     </main>

@@ -28,10 +28,14 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient();
     const shipping = session.collected_information?.shipping_details;
 
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+    const quantity = lineItems.data[0]?.quantity ?? 1;
+
     await supabase
       .from("calendar_orders")
       .update({
         status: "paid",
+        quantity,
         // The pre-checkout amount_total we inserted was a guess — this is
         // the real total, including whichever shipping option they picked.
         amount_total: session.amount_total,
